@@ -1,12 +1,15 @@
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
-from app.otp import verify_otp
+from app.otp import generate_otp, hash_otp, verify_otp
 from app.repositories.user_repository import (
     create_user,
     delete_pending_registration,
     get_pending_registration,
+    get_user_by_email,
+    save_pending_registration,
 )
+from app.security import hash_password
 
 
 def verify_registration_otp(email: str, otp: str) -> dict:
@@ -31,3 +34,24 @@ def verify_registration_otp(email: str, otp: str) -> dict:
     delete_pending_registration(email)
 
     return user
+
+
+def register_user(name: str, email: str, password: str) -> None:
+    existing_user = get_user_by_email(email)
+
+    if existing_user is not None:
+        raise ValueError("An account with this email already exists")
+
+    otp = generate_otp()
+    hashed_otp = hash_otp(otp)
+    hashed_password = hash_password(password)
+
+    expires_at = datetime.now(timezone.utc) + timedelta(minutes=10)
+
+    save_pending_registration(
+        name=name,
+        email=email,
+        password_hash=hashed_password,
+        otp_hash=hashed_otp,
+        expires_at=expires_at,
+    )
