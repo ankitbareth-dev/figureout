@@ -4,6 +4,9 @@ from uuid import UUID
 from app.database import get_connection
 
 
+from datetime import datetime
+
+
 def get_user_by_email(email: str) -> dict | None:
     with get_connection() as connection:
         with connection.cursor() as cursor:
@@ -47,3 +50,34 @@ def create_user(
         raise RuntimeError("User creation failed")
 
     return user
+
+
+def save_pending_registration(
+    name: str,
+    email: str,
+    password_hash: str,
+    otp_hash: str,
+    expires_at: datetime,
+) -> None:
+    with get_connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                INSERT INTO email_verification_otps (
+                    name,
+                    email,
+                    password_hash,
+                    otp_hash,
+                    expires_at
+                )
+                VALUES (%s, %s, %s, %s, %s)
+                ON CONFLICT (email)
+                DO UPDATE SET
+                    name = EXCLUDED.name,
+                    password_hash = EXCLUDED.password_hash,
+                    otp_hash = EXCLUDED.otp_hash,
+                    expires_at = EXCLUDED.expires_at,
+                    created_at = NOW();
+                """,
+                (name, email, password_hash, otp_hash, expires_at),
+            )
