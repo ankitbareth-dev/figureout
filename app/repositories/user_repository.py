@@ -81,3 +81,17 @@ def save_pending_registration(
                 """,
                 (name, email, password_hash, otp_hash, expires_at),
             )
+
+
+def get_pending_registration(email: str) -> dict | None:
+    with get_connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT name, email, password_hash, otp_hash, expires_at
+                FROM email_verification_otps
+                WHERE email = %s;
+                """,
+                (email,),
+            )
+            return cursor.fetchone()
