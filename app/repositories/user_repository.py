@@ -95,3 +95,16 @@ def get_pending_registration(email: str) -> dict | None:
                 (email,),
             )
             return cursor.fetchone()
+
+
+
+def delete_pending_registration(email: str) -> None:
+    with get_connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                DELETE FROM email_verification_otps
+                WHERE email = %s;
+                """,
+                (email,),
+            )
