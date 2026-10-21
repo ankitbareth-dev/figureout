@@ -14,6 +14,7 @@ from app.repositories.user_repository import (
     get_pending_registration,
     get_user_by_email,
     save_pending_registration,
+    get_user_by_id
 )
 from app.security import hash_password
 
@@ -80,3 +81,16 @@ def login_user(email: str, password: str) -> dict:
 
 def logout_user(response: Response) -> None:
     clear_auth_cookie(response)
+
+
+def get_user_profile(user_id: str) -> dict:
+    user = get_user_by_id(user_id)
+
+    if user is None:
+        raise ValueError("User not found")
+
+    return {
+        "id": str(user["id"]),
+        "name": user["name"],
+        "email": user["email"],
+    }
