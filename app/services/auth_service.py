@@ -7,6 +7,8 @@ from fastapi import Response
 
 from app.auth_cookies import clear_auth_cookie
 
+from app.services.token_service import issue_user_token
+
 from app.otp import generate_otp, hash_otp, verify_otp
 from app.repositories.user_repository import (
     create_user,
@@ -76,6 +78,7 @@ def login_user(email: str, password: str) -> dict:
         "id": str(user["id"]),
         "name": user["name"],
         "email": user["email"],
+        "access_token": issue_user_token(str(user["id"])),
     }
 
 
