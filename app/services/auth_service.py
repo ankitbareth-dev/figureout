@@ -55,3 +55,4 @@ def register_user(name: str, email: str, password: str) -> None:
         otp_hash=hashed_otp,
         expires_at=expires_at,
     )
+

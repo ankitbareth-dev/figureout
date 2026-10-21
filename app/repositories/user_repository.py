@@ -108,3 +108,16 @@ def delete_pending_registration(email: str) -> None:
                 """,
                 (email,),
             )
+
+def get_user_by_id(user_id: str) -> dict | None:
+    with get_connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT id, name, email, password_hash, created_at
+                FROM users
+                WHERE id = %s;
+                """,
+                (user_id,),
+            )
+            return cursor.fetchone()
