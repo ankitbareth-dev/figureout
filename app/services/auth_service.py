@@ -1,5 +1,6 @@
 
 from datetime import datetime, timedelta, timezone
+from app.security import verify_password
 
 from app.otp import generate_otp, hash_otp, verify_otp
 from app.repositories.user_repository import (
@@ -56,3 +57,17 @@ def register_user(name: str, email: str, password: str) -> None:
         expires_at=expires_at,
     )
 
+def login_user(email: str, password: str) -> dict:
+    user = get_user_by_email(email)
+
+    if user is None or user["password_hash"] is None:
+        raise ValueError("Invalid email or password")
+
+    if not verify_password(password, user["password_hash"]):
+        raise ValueError("Invalid email or password")
+
+    return {
+        "id": str(user["id"]),
+        "name": user["name"],
+        "email": user["email"],
+    }
