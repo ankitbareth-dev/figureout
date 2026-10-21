@@ -121,3 +121,15 @@ def get_user_by_id(user_id: str) -> dict | None:
                 (user_id,),
             )
             return cursor.fetchone()
+
+
+
+def delete_expired_pending_registrations() -> None:
+    with get_connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                DELETE FROM email_verification_otps
+                WHERE expires_at <= NOW();
+                """
+            )
