@@ -2,6 +2,11 @@
 from datetime import datetime, timedelta, timezone
 from app.security import verify_password
 
+
+from fastapi import Response
+
+from app.auth_cookies import clear_auth_cookie
+
 from app.otp import generate_otp, hash_otp, verify_otp
 from app.repositories.user_repository import (
     create_user,
@@ -71,3 +76,7 @@ def login_user(email: str, password: str) -> dict:
         "name": user["name"],
         "email": user["email"],
     }
+
+
+def logout_user(response: Response) -> None:
+    clear_auth_cookie(response)
