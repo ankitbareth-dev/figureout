@@ -9,3 +9,8 @@ class RegisterRequest(BaseModel):
 class VerifyOTPRequest(BaseModel):
     email: EmailStr
     otp: str = Field(pattern=r"^[0-9]{6}$")
+
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=1)
