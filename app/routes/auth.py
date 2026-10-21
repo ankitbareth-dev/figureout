@@ -1,5 +1,5 @@
 
-from fastapi import APIRouter, HTTPException, Response, status
+from fastapi import APIRouter, HTTPException, Response, status, Depends
 
 from app.auth_cookies import clear_auth_cookie, set_auth_cookie
 from app.schemas.auth import LoginRequest, RegisterRequest, VerifyOTPRequest
@@ -7,7 +7,9 @@ from app.services.auth_service import (
     login_user,
     register_user,
     verify_registration_otp,
+    
 )
+from app.auth_dependencies import get_current_user
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -67,3 +69,9 @@ def login(data: LoginRequest, response: Response):
 def logout(response: Response):
     clear_auth_cookie(response)
     return {"message": "Logged out successfully"}
+
+
+@router.get("/me")
+def get_me(current_user: dict = Depends(get_current_user)):
+    return current_user
+
