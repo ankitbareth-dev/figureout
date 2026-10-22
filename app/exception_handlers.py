@@ -64,3 +64,21 @@ async def http_exception_handler(
         content=response.model_dump(),
         headers=exc.headers,
     )
+
+
+async def unexpected_exception_handler(
+    request: Request,
+    exc: Exception,
+) -> JSONResponse:
+    response = ErrorResponse(
+        error=ErrorBody(
+            code="INTERNAL_SERVER_ERROR",
+            message="An unexpected error occurred",
+            details=[],
+        )
+    )
+
+    return JSONResponse(
+        status_code=500,
+        content=response.model_dump(),
+    )

@@ -5,6 +5,7 @@ from fastapi.exceptions import RequestValidationError
 from app.exception_handlers import (
     http_exception_handler,
     validation_exception_handler,
+    unexpected_exception_handler
 )
 from app.routes.auth import router as auth_router
 
@@ -18,6 +19,11 @@ app.add_exception_handler(
 app.add_exception_handler(
     HTTPException,
     http_exception_handler,
+)
+
+app.add_exception_handler(
+    Exception,
+    unexpected_exception_handler,
 )
 
 app.include_router(auth_router)
