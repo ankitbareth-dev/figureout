@@ -42,12 +42,17 @@ def verify_registration_otp(email: str, otp: str) -> dict:
 
     delete_pending_registration(email)
 
-    return user
+    return {
+        "id": str(user["id"]),
+        "name": user["name"],
+        "email": user["email"],
+        "access_token": issue_user_token(str(user["id"])),
+    }
 
 
 def register_user(name: str, email: str, password: str) -> None:
     existing_user = get_user_by_email(email)
-
+    
     if existing_user is not None:
         raise ValueError("An account with this email already exists")
 

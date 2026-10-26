@@ -24,7 +24,7 @@ def register(data: RegisterRequest):
             detail=str(error),
         ) from error
 
-    return {"message": "Registration pending OTP verification"}
+    return {"message": "Please verify your email using the OTP."}
 
 
 @router.post("/verify-otp")
