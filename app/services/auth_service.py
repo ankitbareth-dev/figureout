@@ -9,6 +9,8 @@ from app.auth_cookies import clear_auth_cookie
 
 from app.services.token_service import issue_user_token
 
+from app.email_service import send_otp_email
+
 from app.otp import generate_otp, hash_otp, verify_otp
 from app.repositories.user_repository import (
     create_user,
@@ -69,6 +71,8 @@ def register_user(name: str, email: str, password: str) -> None:
         otp_hash=hashed_otp,
         expires_at=expires_at,
     )
+
+    send_otp_email(email, otp)
 
 def login_user(email: str, password: str) -> dict:
     user = get_user_by_email(email)
