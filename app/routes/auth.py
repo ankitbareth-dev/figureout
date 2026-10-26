@@ -14,6 +14,7 @@ from app.auth_dependencies import get_current_user
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
+
 @router.post("/register", status_code=status.HTTP_202_ACCEPTED)
 def register(data: RegisterRequest):
     try:
@@ -23,8 +24,14 @@ def register(data: RegisterRequest):
             status_code=status.HTTP_409_CONFLICT,
             detail=str(error),
         ) from error
+    except RuntimeError as error:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=str(error),
+        ) from error
 
     return {"message": "Please verify your email using the OTP."}
+
 
 
 @router.post("/verify-otp")
