@@ -19,11 +19,14 @@ def send_otp_email(email: str, otp: str) -> None:
         {
             "from": from_email,
             "to": [email],
-            "subject": "Your Figureout verification code",
+            "subject": "Verify your Figureout account",
             "html": (
-                f"<p>Your Figureout verification code is "
-                f"<strong>{otp}</strong>.</p>"
+                "<div>"
+                "<h2>Verify your email</h2>"
+                "<p>Your Figureout verification code is:</p>"
+                f"<h1>{otp}</h1>"
                 "<p>This code expires in 10 minutes.</p>"
+                "</div>"
             ),
         }
     )

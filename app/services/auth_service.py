@@ -52,9 +52,10 @@ def verify_registration_otp(email: str, otp: str) -> dict:
     }
 
 
+
 def register_user(name: str, email: str, password: str) -> None:
     existing_user = get_user_by_email(email)
-    
+
     if existing_user is not None:
         raise ValueError("An account with this email already exists")
 
@@ -72,7 +73,14 @@ def register_user(name: str, email: str, password: str) -> None:
         expires_at=expires_at,
     )
 
-    send_otp_email(email, otp)
+    try:
+        send_otp_email(email, otp)
+    except Exception as error:
+        delete_pending_registration(email)
+        raise RuntimeError(
+            "Unable to send verification email. Please try again."
+        ) from error
+
 
 def login_user(email: str, password: str) -> dict:
     user = get_user_by_email(email)
